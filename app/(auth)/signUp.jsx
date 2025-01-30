@@ -1,8 +1,9 @@
-import { View, Text, TextInput, Image, ScrollView } from 'react-native';
+import { View, Text, TextInput, Image, ScrollView, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
 import CustomButton from '../../components/CustmonButton';
 import images from '../../constants/images';
+import { Feather } from '@expo/vector-icons';
 
 const SignUp = () => {
   const router = useRouter();
@@ -11,9 +12,9 @@ const SignUp = () => {
   const [branch, setBranch] = useState('');
   const [year, setYear] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleSignUp = () => {
-  };
+  const handleSignUp = () => { };
 
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -23,7 +24,9 @@ const SignUp = () => {
           className="w-32 h-32 mb-6"
           resizeMode="contain"
         />
-        <Text className="text-2xl font-bold text-gray-800 mb-8">Create an Account 🚀</Text>
+        <Text className="text-2xl font-bold text-gray-800 mb-8">
+          Create an Account 🚀
+        </Text>
 
         <TextInput
           placeholder="Full Name"
@@ -56,13 +59,25 @@ const SignUp = () => {
           keyboardType="numeric"
         />
 
-        <TextInput
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          className="w-full max-w-[80%] border border-gray-400 rounded-lg p-4 bg-white mb-6 shadow-sm"
-          secureTextEntry
-        />
+        <View className="w-full max-w-[80%] relative mb-6">
+          <TextInput
+            placeholder="Enter your password"
+            value={password}
+            onChangeText={setPassword}
+            className="w-full border border-gray-400 rounded-lg p-4 bg-white shadow-sm"
+            secureTextEntry={!showPassword}
+          />
+          <TouchableOpacity
+            onPress={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-4"
+          >
+            <Feather
+              name={showPassword ? 'eye-off' : 'eye'}
+              size={20}
+              color="#666"
+            />
+          </TouchableOpacity>
+        </View>
 
         <CustomButton
           title="Sign Up"
