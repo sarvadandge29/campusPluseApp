@@ -1,6 +1,6 @@
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router'
-import React from 'react'
+import { SplashScreen, Stack } from 'expo-router'
+import React, { useEffect } from 'react'
 import "../global.css";
 import { StatusBar } from 'expo-status-bar';
 
@@ -12,6 +12,24 @@ const AppLayout = () => {
         'IBMPlexSans-Bold': require('../assets/fonts/IBMPlexSans-Bold.ttf'),
         'bebasNeueRegular': require('../assets/fonts/BebasNeue-Regular.ttf'),
     });
+
+    useEffect(() => {
+        if (error) throw error;
+
+        if (fontsLoaded) {
+            SplashScreen.hideAsync();
+        }
+
+    }, []);
+
+
+    if (!fontsLoaded) {
+        return null;
+    }
+
+    if (!fontsLoaded && !error) {
+        return null;
+    }
 
     return (
         <>
