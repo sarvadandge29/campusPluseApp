@@ -9,8 +9,8 @@ const RootLayout = () => {
       <StatusBar style="light" backgroundColor="#3B82F6" />
       <Tabs
         screenOptions={{
-          tabBarActiveTintColor: 'blue', // Customize the active tab color
-          tabBarInactiveTintColor: 'gray', // Customize the inactive tab color
+          tabBarActiveTintColor: 'blue',
+          tabBarInactiveTintColor: 'gray',
         }}
       >
         <Tabs.Screen
@@ -20,7 +20,7 @@ const RootLayout = () => {
             tabBarIcon: ({ color, size }) => (
               <Ionicons name="chatbubbles" size={size} color={color} />
             ),
-            tabBarLabel: 'Chat', // Optional: Customize the label
+            tabBarLabel: 'Chat',
           }}
         />
         <Tabs.Screen
