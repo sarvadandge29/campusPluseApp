@@ -7,7 +7,6 @@ const Tab = createMaterialTopTabNavigator();
 
 const LostFoundLayout = () => {
   return (
-
       <Tab.Navigator
         screenOptions={{
           tabBarLabelStyle: { fontSize: 12, fontWeight: 'bold' },
