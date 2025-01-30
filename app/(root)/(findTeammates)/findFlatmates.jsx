@@ -1,7 +1,7 @@
 import { View, Text } from 'react-native'
 import React from 'react'
 
-const FindFlatemets = () => {
+const FindFlatmates = () => {
   return (
     <View>
       <Text>FindFlatemets</Text>
@@ -9,4 +9,4 @@ const FindFlatemets = () => {
   )
 }
 
-export default FindFlatemets
+export default FindFlatmates
