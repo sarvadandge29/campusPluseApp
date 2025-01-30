@@ -1,15 +1,16 @@
-import { View, Text, TextInput, Image, Alert } from 'react-native';
+import { View, Text, TextInput, Image, Alert, TouchableOpacity } from 'react-native';
 import React, { useState } from 'react';
 import { useRouter } from 'expo-router';
 import CustomButton from '../../components/CustmonButton';
 import images from '../../constants/images';
 import { supabase } from "../../utils/supabase/client";
-
+import { Feather } from '@expo/vector-icons';
 const SignIn = () => {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSignIn = async () => {
     setLoading(true);
@@ -49,13 +50,25 @@ const SignIn = () => {
         autoCapitalize="none"
       />
 
-      <TextInput
-        placeholder="Enter your password"
-        value={password}
-        onChangeText={setPassword}
-        className="w-full max-w-[80%] border border-gray-400 rounded-lg p-4 bg-white mb-6 shadow-sm"
-        secureTextEntry
-      />
+      <View className="w-full max-w-[80%] relative mb-6">
+        <TextInput
+          placeholder="Enter your password"
+          value={password}
+          onChangeText={setPassword}
+          className="w-full border border-gray-400 rounded-lg p-4 bg-white shadow-sm"
+          secureTextEntry={!showPassword}
+        />
+        <TouchableOpacity
+          onPress={() => setShowPassword(!showPassword)}
+          className="absolute right-3 top-4"
+        >
+          <Feather
+            name={showPassword ? 'eye-off' : 'eye'}
+            size={20}
+            color="#666"
+          />
+        </TouchableOpacity>
+      </View>
 
       <CustomButton
         title={loading ? "Signing In..." : "Sign In"}
