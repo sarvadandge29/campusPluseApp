@@ -2,6 +2,7 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router'
 import React from 'react'
 import "../global.css";
+import { StatusBar } from 'expo-status-bar';
 
 const AppLayout = () => {
     const [fontsLoaded, error] = useFonts({
@@ -13,9 +14,12 @@ const AppLayout = () => {
     });
 
     return (
-        <Stack>
-            <Stack.Screen name='index' options={{headerShown : false}}/>
-        </Stack>
+        <>
+            <StatusBar style="light" backgroundColor="#3B82F6" />
+            <Stack>
+                <Stack.Screen name='index' options={{ headerShown: false }} />
+            </Stack>
+        </>
     )
 }
 
