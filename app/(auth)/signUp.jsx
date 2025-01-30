@@ -17,7 +17,7 @@ const SignUp = () => {
 
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-      <View className="flex-1 justify-center items-center px-6 bg-gray-100">
+      <View className="flex-1 justify-center items-center bg-gray-100">
         <Image
           source={images.IndexImage}
           className="w-32 h-32 mb-6"
