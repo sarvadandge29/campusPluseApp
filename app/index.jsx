@@ -10,7 +10,7 @@ const Index = () => {
 
   const handleContinueWithEmail = () => {
     console.log('Continue With Email pressed');
-    router.push('/chat');
+    router.push('/signIn');
   };
 
   return (

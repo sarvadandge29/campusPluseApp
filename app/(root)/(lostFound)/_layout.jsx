@@ -12,7 +12,6 @@ const LostFoundLayout = () => {
       <Tab.Navigator
         screenOptions={{
           tabBarLabelStyle: { fontSize: 12, fontWeight: 'bold' },
-          tabBarItemStyle: { width: 120 },
           tabBarStyle: { backgroundColor: '#fff' },
           tabBarIndicatorStyle: { backgroundColor: '#000' },
         }}
