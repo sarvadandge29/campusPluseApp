@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import images from '../constants/images'; // Adjust the path to your images file
 import CustomButton from '../components/CustomButton'; // Adjust the import path as needed
 
-const YourComponent = () => {
+const Index = () => {
   const router = useRouter();
 
   const handleContinueWithEmail = () => {
@@ -41,4 +41,4 @@ const YourComponent = () => {
   );
 };
 
-export default YourComponent;
+export default Index;
