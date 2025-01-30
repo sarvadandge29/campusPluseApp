@@ -9,7 +9,6 @@ const Index = () => {
   const router = useRouter();
 
   const handleContinueWithEmail = () => {
-    console.log('Continue With Email pressed');
     router.push('/signIn');
   };
 
@@ -32,7 +31,7 @@ const Index = () => {
       <CustomButton
         title="Continue With Email"
         handlePress={handleContinueWithEmail}
-        containerStyles="mt-10 w-[60%] h-[48] border border-black rounded-[5px]"
+        containerStyles="mt-7 w-[60%] h-[48] border border-black rounded-[5px]"
         textStyle="text-blue"
         isLoading={false}
       />
