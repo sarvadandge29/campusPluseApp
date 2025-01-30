@@ -24,7 +24,6 @@ const SignUp = () => {
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
-  // Sign Up Logic
   const handleSignUp = async () => {
     if (phoneNumber.length !== 10 || !/^\d+$/.test(phoneNumber)) {
       setError('Phone number must be exactly 10 digits.');
@@ -53,7 +52,7 @@ const SignUp = () => {
 
       const { error: insertError } = await supabase.from('users').insert([
         {
-          userid: user?.id, // Corrected key
+          userid: user?.id,
           name: username,
           email: user?.email,
           phonenumber: phoneNumber,
@@ -68,7 +67,7 @@ const SignUp = () => {
       if (insertError) throw insertError;
 
       setSuccessMessage('Sign up successful! Redirecting...');
-      setTimeout(() => router.push('/'), 1500);
+      setTimeout(() => router.push('/chat'), 1500);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -165,8 +164,15 @@ const SignUp = () => {
             className="w-full border border-gray-400 rounded-lg p-4 bg-white shadow-sm"
             secureTextEntry={!showPassword}
           />
-          <TouchableOpacity onPress={() => setShowPassword(!showPassword)} className="absolute right-3 top-4">
-            <Feather name={showPassword ? 'eye-off' : 'eye'} size={20} color="#666" />
+          <TouchableOpacity
+            onPress={() => setShowPassword(!showPassword)}
+            className="absolute right-3 top-4"
+          >
+            <Feather
+              name={showPassword ? 'eye-off' : 'eye'}
+              size={20}
+              color="#666"
+            />
           </TouchableOpacity>
         </View>
 
