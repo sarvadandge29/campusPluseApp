@@ -1,6 +1,5 @@
 import React from 'react';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { View, StatusBar, SafeAreaView } from 'react-native';
 import AllRequests from './allRequests';
 import CreateRequest from './createRequest';
 
