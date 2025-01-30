@@ -1,19 +1,33 @@
 import React from 'react';
-import { View, Text, Image } from 'react-native';
-import { useRouter } from 'expo-router';
+import { View, Text, Image, ActivityIndicator } from 'react-native';
+import { Redirect, useRouter } from 'expo-router';
 import CustomButton from '../components/CustmonButton';
 import images from '../constants/images';
-
+import { useAuth } from '../context/AuthContext';
 
 const Index = () => {
   const router = useRouter();
+  const { session, loading } = useAuth();
 
   const handleContinueWithEmail = () => {
     router.push('/signIn');
   };
 
+  if (loading) {
+    return(
+      <View className="items-center justify-center flex-1 flex-row">
+        <ActivityIndicator size='large' color='blue'/>
+        <Text> Loading...</Text>
+      </View>
+    )
+  }
+
+  if (!loading && session) {
+    return <Redirect href='/chat'/>
+  }
+
   return (
-    <View className="w-full items-center flex-center">
+    <View className="w-full items-center flex-center flex-1">
       <Image
         source={images.IndexImage}
         className="w-32 h-32 mb-6 mt-24"
