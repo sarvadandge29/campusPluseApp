@@ -13,6 +13,7 @@ const CommonLayout = () => {
       <StatusBar style="light" backgroundColor="#3B82F6" />  
       <Stack>
         <Stack.Screen name='profile' options={{ headerShown: false }} />
+        <Stack.Screen name='chatroom' options={{ headerShown: false }} />
       </Stack>
     </>
   )
