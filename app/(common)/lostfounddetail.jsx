@@ -3,24 +3,24 @@ import React, { useEffect, useState } from 'react';
 import { useLocalSearchParams } from 'expo-router'; // Use useLocalSearchParams
 import { supabase } from '../../utils/supabase/client';
 
-const EventDetails = () => {
-  const { eventId } = useLocalSearchParams(); // Get eventId from query parameters
-  const [event, setEvent] = useState(null);
+const LostFoundDetail = () => {
+  const { requestId } = useLocalSearchParams(); // Get requestId from query parameters
+  const [request, setRequest] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchEventDetails = async () => {
+    const fetchRequestDetails = async () => {
       try {
         const { data, error } = await supabase
-          .from('eventManagement')
+          .from('lostFound')
           .select('*')
-          .eq('id', eventId)
+          .eq('id', requestId)
           .single();
 
         if (error) throw error;
 
-        setEvent(data);
+        setRequest(data);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -28,8 +28,8 @@ const EventDetails = () => {
       }
     };
 
-    fetchEventDetails();
-  }, [eventId]);
+    fetchRequestDetails();
+  }, [requestId]);
 
   if (loading) {
     return (
@@ -49,28 +49,25 @@ const EventDetails = () => {
 
   return (
     <View className="p-4 bg-white">
-      {/* Event Name */}
-      <Text className="text-2xl font-bold">{event.name}</Text>
-
-      {/* Event Description */}
-      <Text className="text-lg mt-2">{event.description}</Text>
-
-      {/* Event Date */}
-      <Text className="text-sm text-gray-500 mt-4">Date: {event.date}</Text>
-
-      {/* Club Name */}
-      <Text className="text-sm text-gray-500 mt-2">Club: {event.clubName}</Text>
-
-      {/* Event Image */}
-      {event.imageLink && (
+      {/* Item Image */}
+      {request.imageUrl && (
         <Image
-          source={{ uri: event.imageLink }}
-          className="w-full h-40 rounded-lg mt-4"
-          resizeMode="cover"
+          source={{ uri: request.imageUrl }}
+          className="w-full h-40 rounded-lg mb-3"
+          resizeMode="contain"
         />
       )}
+
+      {/* Item Title */}
+      <Text className="text-2xl font-bold">{request.title}</Text>
+
+      {/* Found At Location */}
+      <Text className="text-gray-700 text-sm mt-2">📍 {request.foundAt}</Text>
+
+      {/* Item Description */}
+      <Text className="text-lg mt-2">{request.description}</Text>
     </View>
   );
 };
 
-export default EventDetails;
+export default LostFoundDetail;

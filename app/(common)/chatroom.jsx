@@ -1,4 +1,4 @@
-import { View, Text, StatusBar, TouchableOpacity, SafeAreaView } from 'react-native';
+import { View, Text, StatusBar, TouchableOpacity, SafeAreaView, ImageBackground } from 'react-native';
 import React, { useEffect, useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -6,6 +6,8 @@ import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../utils/supabase/client';
 import { Ionicons } from '@expo/vector-icons';
 import { Bubble, GiftedChat, InputToolbar, Send } from 'react-native-gifted-chat';
+import images from '../../constants/images';
+import wallpaper from '../../assets/images/backgroundImage.png';
 
 const Chat = () => {
   const { user } = useAuth();
@@ -152,29 +154,31 @@ const Chat = () => {
 
   return (
     <GestureHandlerRootView className="flex-1">
-      <SafeAreaView className="flex-1 bg-white">
-        <View className="flex-row px-2 pt-1 bg-blue-400">
-          <TouchableOpacity onPress={handlePress}>
-            <Ionicons name="arrow-back" size={30} color="white" />
-          </TouchableOpacity>
-          <Text className="text-white text-2xl pt-1">{name}</Text>
-        </View>
-        <GiftedChat
-          messages={messages}
-          onSend={onSend}
-          user={{
-            _id: user?.id,
-            name: user?.name,
-          }}
-          placeholder="Message"
-          alwaysShowSend
-          renderInputToolbar={renderInputToolbar}
-          inverted={true}
-          renderBubble={renderBubble}
-          renderTime={renderTime}
-          renderSend={renderSend}
-        />
-      </SafeAreaView>
+      <ImageBackground className="flex-1" source={images.wallpaper}>
+        <SafeAreaView className="flex-1">
+          <View className="flex-row px-2 pt-1 bg-blue-400">
+            <TouchableOpacity onPress={handlePress}>
+              <Ionicons name="arrow-back" size={30} color="white" />
+            </TouchableOpacity>
+            <Text className="text-white text-2xl pt-1">{name}</Text>
+          </View>
+          <GiftedChat
+            messages={messages}
+            onSend={onSend}
+            user={{
+              _id: user?.id,
+              name: user?.name,
+            }}
+            placeholder="Message"
+            alwaysShowSend
+            renderInputToolbar={renderInputToolbar}
+            inverted={true}
+            renderBubble={renderBubble}
+            renderTime={renderTime}
+            renderSend={renderSend}
+          />
+        </SafeAreaView>
+      </ImageBackground>
     </GestureHandlerRootView>
   );
 };
