@@ -11,10 +11,9 @@ const UserCard = () => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                // Fetch all users from the 'users' table
                 const { data, error } = await supabase
                     .from('users')
-                    .select('name, department, skills');
+                    .select('*');
 
                 if (error) {
                     throw error;
@@ -44,9 +43,7 @@ const UserCard = () => {
             pathname: '/chatroom',
             params: {
                 name: user.name,
-                department: user.department,
-                skills: user.skills,
-                user : user,
+                userId : user.userid,
             },
         });
     };
@@ -57,7 +54,7 @@ const UserCard = () => {
                 <TouchableOpacity
                     key={index}
                     onPress={() => handleCardPress(user)}
-                    activeOpacity={0.7} // Slight opacity change on press
+                    activeOpacity={0.7}
                 >
                     <View style={styles.card}>
                         <Text style={styles.name}>{user.name}</Text>
