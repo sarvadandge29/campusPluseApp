@@ -11,7 +11,7 @@ import wallpaper from '../../assets/images/backgroundImage.png';
 
 const Chat = () => {
   const { user } = useAuth();
-  const { name: name, userId } = useLocalSearchParams();
+  const { name, userId } = useLocalSearchParams();
   const [messages, setMessages] = useState([]);
 
   const getRoomId = (firstUserId, secondUserId) => {
@@ -53,9 +53,36 @@ const Chat = () => {
     setMessages(formattedMessages);
   };
 
-  const onSend = async (newMessages) => {
+  // Enable real-time subscription for new messages
+  useEffect(() => {
+    const channel = supabase.channel(roomId) // Create a channel for this room
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chatroom' }, (payload) => {
+        const newMessage = payload.new;
+        const formattedMessage = {
+          _id: newMessage.id,
+          text: newMessage.body,
+          createdAt: new Date(newMessage.created_at),
+          user: {
+            _id: newMessage.senderName === user.name ? user.id : userId,
+            name: newMessage.senderName,
+          },
+        };
+        setMessages((prevMessages) => [formattedMessage, ...prevMessages]);
+      })
+      .subscribe();
+
+    // Cleanup subscription on component unmount
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [roomId, user?.id, user?.name]);
+
+  const onSend = async (newMessages = []) => {
     const newMessage = newMessages[0];
     try {
+      // Immediately update the UI with the new message
+      setMessages((prevMessages) => [newMessage, ...prevMessages]);
+
       const { error } = await supabase
         .from('chatroom')
         .insert([
@@ -71,8 +98,6 @@ const Chat = () => {
         console.error('Error sending message:', error);
         return;
       }
-
-      setMessages((prevMessages) => [newMessage, ...prevMessages]);
     } catch (error) {
       console.error('Error sending message:', error);
     }
@@ -91,62 +116,50 @@ const Chat = () => {
     />
   );
 
-  const renderSend = (props) => {
-    return (
-      <Send {...props}>
-        <View style={{ justifyContent: 'center', alignItems: 'center', marginRight: 10 }}>
-          <Ionicons name="arrow-forward" size={30} color="white" />
-        </View>
-      </Send>
-    );
-  };
+  const renderSend = (props) => (
+    <Send {...props}>
+      <View style={{ justifyContent: 'center', alignItems: 'center', marginRight: 10 }}>
+        <Ionicons name="arrow-forward" size={30} color="white" />
+      </View>
+    </Send>
+  );
 
-  const renderBubble = (props) => {
-    return (
-      <Bubble
-        {...props}
-        textStyle={{
-          left: {
-            color: '#000',
-          },
-          right: {
-            color: '#000',
-          },
-        }}
-        wrapperStyle={{
-          left: {
-            backgroundColor: '#fff',
-          },
-          right: {
-            backgroundColor: '#8DE0E0',
-          },
-        }}
-      />
-    );
-  };
+  const renderBubble = (props) => (
+    <Bubble
+      {...props}
+      textStyle={{
+        left: {
+          color: '#000',
+        },
+        right: {
+          color: '#000',
+        },
+      }}
+      wrapperStyle={{
+        left: {
+          backgroundColor: '#fff',
+        },
+        right: {
+          backgroundColor: '#8DE0E0',
+        },
+      }}
+    />
+  );
 
   const renderTime = (props) => {
     const { currentMessage } = props;
-    const formattedTime = currentMessage.createdAt instanceof Date ? currentMessage.createdAt.toLocaleTimeString([], {
-      hour: '2-digit',
-      minute: '2-digit',
-    }) : ''; // Return empty string if the date is invalid
+    const formattedTime = currentMessage.createdAt instanceof Date
+      ? currentMessage.createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      : ''; 
 
     return (
       <View style={{ marginLeft: 5, marginRight: 5, marginBottom: 3 }}>
-        <Text
-          style={{
-            fontSize: 10,
-            color: '#000',
-            opacity: 0.8,
-          }}
-        >
+        <Text style={{ fontSize: 10, color: '#000', opacity: 0.8 }}>
           {formattedTime}
         </Text>
       </View>
     );
   };
-
 
   const handlePress = () => {
     router.push({ pathname: '/chat' });
