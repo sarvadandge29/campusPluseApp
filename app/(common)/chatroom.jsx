@@ -1,39 +1,182 @@
-import React, { useState, useCallback } from 'react';
-import { View, Text } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
-import { GiftedChat } from 'react-native-gifted-chat';
+import { View, Text, StatusBar, TouchableOpacity, SafeAreaView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useAuth } from '../../context/AuthContext';
+import { supabase } from '../../utils/supabase/client';
+import { Ionicons } from '@expo/vector-icons';
+import { Bubble, GiftedChat, InputToolbar, Send } from 'react-native-gifted-chat';
 
-const Chatroom = () => {
-  // Receive parameters from the previous screen
-  const { name, department, skills, user } = useLocalSearchParams();
-
-  // Chat state
+const Chat = () => {
+  const { user } = useAuth();
+  const { name: name, userId } = useLocalSearchParams();
   const [messages, setMessages] = useState([]);
 
-  // Function to handle sending messages
-  const onSend = useCallback((newMessages = []) => {
-    setMessages((prevMessages) => GiftedChat.append(prevMessages, newMessages));
-  }, []);
+  const getRoomId = (firstUserId, secondUserId) => {
+    const sortedIds = [firstUserId, secondUserId].sort();
+    return sortedIds.join('-');
+  };
 
-  return (
-    <View className="flex-1 bg-gray-100">
-      {/* Chat Header */}
-      <View className="p-4 bg-blue-600 rounded-md">
-        <Text className="text-white text-lg font-bold">{name}</Text>
-        <Text className="text-gray-300 text-sm">{department} | {skills}</Text>
-      </View>
+  const roomId = getRoomId(userId, user?.userid);
 
-      {/* Chat UI */}
-      <GiftedChat
-        messages={messages}
-        onSend={(newMessages) => onSend(newMessages)}
-        user={{
-        //   _id: userId, // Unique user ID
-          name: name,
+  useEffect(() => {
+    const fetchMessages = async () => {
+      await getMessagesByRoomId(roomId);
+    };
+    fetchMessages();
+  }, [roomId]);
+
+  const getMessagesByRoomId = async (roomId) => {
+    const { data, error } = await supabase
+      .from('chatroom')
+      .select('*')
+      .eq('roomId', roomId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching messages:', error);
+      return;
+    }
+
+    const formattedMessages = data.map((doc) => ({
+      _id: doc.id,
+      text: doc.body,
+      createdAt: new Date(doc.created_at),
+      user: {
+        _id: doc.senderName === user.name ? user.id : userId,
+        name: doc.senderName,
+      },
+    }));
+
+    setMessages(formattedMessages);
+  };
+
+  const onSend = async (newMessages) => {
+    const newMessage = newMessages[0];
+    try {
+      const { error } = await supabase
+        .from('chatroom')
+        .insert([
+          {
+            body: newMessage.text,
+            roomId: roomId,
+            senderName: user.name,
+            created_at: new Date().toISOString(),
+          },
+        ]);
+
+      if (error) {
+        console.error('Error sending message:', error);
+        return;
+      }
+
+      setMessages((prevMessages) => [newMessage, ...prevMessages]);
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
+  };
+
+  const renderInputToolbar = (props) => (
+    <InputToolbar
+      {...props}
+      containerStyle={{
+        backgroundColor: '#3B82F6',
+        padding: 5,
+      }}
+      textInputStyle={{
+        color: '#FFFFFF',
+      }}
+    />
+  );
+
+  const renderSend = (props) => {
+    return (
+      <Send {...props}>
+        <View style={{ justifyContent: 'center', alignItems: 'center', marginRight: 10 }}>
+          <Ionicons name="arrow-forward" size={30} color="white" />
+        </View>
+      </Send>
+    );
+  };
+
+  const renderBubble = (props) => {
+    return (
+      <Bubble
+        {...props}
+        textStyle={{
+          left: {
+            color: '#000',
+          },
+          right: {
+            color: '#000',
+          },
+        }}
+        wrapperStyle={{
+          left: {
+            backgroundColor: '#fff',
+          },
+          right: {
+            backgroundColor: '#8DE0E0',
+          },
         }}
       />
-    </View>
+    );
+  };
+
+  const renderTime = (props) => {
+    const { currentMessage } = props;
+    const formattedTime = currentMessage.createdAt instanceof Date ? currentMessage.createdAt.toLocaleTimeString([], {
+      hour: '2-digit',
+      minute: '2-digit',
+    }) : ''; // Return empty string if the date is invalid
+
+    return (
+      <View style={{ marginLeft: 5, marginRight: 5, marginBottom: 3 }}>
+        <Text
+          style={{
+            fontSize: 10,
+            color: '#000',
+            opacity: 0.8,
+          }}
+        >
+          {formattedTime}
+        </Text>
+      </View>
+    );
+  };
+
+
+  const handlePress = () => {
+    router.push({ pathname: '/chat' });
+  };
+
+  return (
+    <GestureHandlerRootView className="flex-1">
+      <SafeAreaView className="flex-1 bg-white">
+        <View className="flex-row px-2 pt-1 bg-blue-400">
+          <TouchableOpacity onPress={handlePress}>
+            <Ionicons name="arrow-back" size={30} color="white" />
+          </TouchableOpacity>
+          <Text className="text-white text-2xl pt-1">{name}</Text>
+        </View>
+        <GiftedChat
+          messages={messages}
+          onSend={onSend}
+          user={{
+            _id: user?.id,
+            name: user?.name,
+          }}
+          placeholder="Message"
+          alwaysShowSend
+          renderInputToolbar={renderInputToolbar}
+          inverted={true}
+          renderBubble={renderBubble}
+          renderTime={renderTime}
+          renderSend={renderSend}
+        />
+      </SafeAreaView>
+    </GestureHandlerRootView>
   );
 };
 
-export default Chatroom;
+export default Chat;
