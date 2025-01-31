@@ -14,6 +14,8 @@ const CommonLayout = () => {
       <Stack>
         <Stack.Screen name='profile' options={{ headerShown: false }} />
         <Stack.Screen name='chatroom' options={{ headerShown: false }} />
+        <Stack.Screen name='lostfounddetail' options={{ headerShown: false }} />
+        <Stack.Screen name='eventdetails' options={{ headerShown: false }} />
       </Stack>
     </>
   )
