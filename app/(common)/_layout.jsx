@@ -1,12 +1,20 @@
-import { View, Text } from 'react-native'
+import { StatusBar } from 'react-native'
 import React from 'react'
-import { Stack } from 'expo-router'
+import { Redirect, Stack } from 'expo-router'
+import { useAuth } from '../../context/AuthContext';
 
 const CommonLayout = () => {
+  const {user} = useAuth();
+  if (!user) {
+    return <Redirect href='/signIn'/>
+  }
   return (
-    <Stack>
-      <Stack.Screen name='profile' options={{ headerShown: false }} />
-    </Stack>
+    <>
+      <StatusBar style="light" backgroundColor="#3B82F6" />  
+      <Stack>
+        <Stack.Screen name='profile' options={{ headerShown: false }} />
+      </Stack>
+    </>
   )
 }
 

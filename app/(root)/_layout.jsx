@@ -1,15 +1,18 @@
 import React from 'react';
-import { Tabs } from 'expo-router';
+import { Redirect, Tabs } from 'expo-router';
 import { Ionicons, MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import { StatusBar } from 'react-native';
+import Header from '../../components/Header';
 
 const RootLayout = () => {
+
   return (
     <>
       <StatusBar style="light" backgroundColor="#3B82F6" />
+      <Header />
       <Tabs
         screenOptions={{
-          tabBarActiveTintColor: 'blue',
+          tabBarActiveTintColor: '#3B82F6',
           tabBarInactiveTintColor: 'gray',
         }}
       >
